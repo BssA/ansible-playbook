@@ -1,7 +1,10 @@
----
-- host: my_servers
-  become: true
-  task:
-    - name: Print OS info
-      ansible.builtin.package:
-        name: apache2
+- name: Make sure 'nginx' is started
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes
+  register: result
+
+- name: Show result
+  debug:
+    msg: "{{ result }}"
