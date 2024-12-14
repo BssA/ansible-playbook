@@ -2,7 +2,8 @@
 - name: Add ssh key
   hosts: Ubuntu
   become: true
-
+  
+  tasks:
   - name: Change sudoers file
     ansible.builtin.lineinfile:
       path: /etc/sudoers
