@@ -1,5 +1,8 @@
 ---
-- name: Remove fail2ban package
-  apt:
-    name: fail2ban
-    state: absent
+- name: UnInstall fail2ban
+  hosts: all
+  become: true
+    - name: Remove fail2ban package
+    apt:
+      name: fail2ban
+      state: absent
