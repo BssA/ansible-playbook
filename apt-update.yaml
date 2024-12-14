@@ -1,3 +1,4 @@
+---
 - hosts: Ubuntu
   become: true
   tasks:
