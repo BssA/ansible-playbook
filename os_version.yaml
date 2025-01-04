@@ -5,4 +5,5 @@
   tasks:
     - name: Display Ubuntu version
       debug:
-        msg: "The Ubuntu version on the host is {{ ansible_facts['distribution_version'] }}"
+        msg: "Denne server køre OS: {{ ansible_facts['distribution'] }}"
+        msg: "Denne server køre Vesion: {{ ansible_facts['distribution_version'] }}"
