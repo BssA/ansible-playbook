@@ -5,5 +5,5 @@
 
   tasks:
     - name: OS Version
-      shell: lsb_release
+      shell: lsb_release -a
       ignore_errors: true
