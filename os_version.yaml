@@ -5,4 +5,4 @@
   tasks:
     - name: Show distribution name
       debug:
-        msg: "Distribution: {{ ansible_facts['distribution'] }} Version:  {{ ansible_facts['distribution_version'] }}"
+        msg: "Distribution: {{ ansible_facts['distribution'] }} Version: {{ ansible_facts['distribution_version'] }}"
