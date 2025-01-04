@@ -6,5 +6,5 @@
   tasks:
 
     - name: ping
-      shell: ping -c 10 -w 2 8.8.8.8
+      shell: ping -c 10 -w 10 8.8.8.8
       ignore_errors: true
