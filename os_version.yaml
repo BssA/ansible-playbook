@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: False
+  connection: local
+
+  tasks:
+    - name: OS Version
+      shell: lsb_release
+      ignore_errors: true
