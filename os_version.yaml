@@ -3,7 +3,18 @@
   hosts: all
   gather_facts: yes
   tasks:
-    - name: Display Ubuntu version
+    - name: Show distribution name
       debug:
-        msg: "Denne server køre OS: {{ ansible_facts['distribution'] }}"
-        msg: "Denne server køre Vesion: {{ ansible_facts['distribution_version'] }}"
+        msg: "Distribution: {{ ansible_facts['distribution'] }}"
+
+    - name: Show distribution version
+      debug:
+        msg: "Version: {{ ansible_facts['distribution_version'] }}"
+
+    - name: Show distribution codename
+      debug:
+        msg: "Codename: {{ ansible_facts['distribution_codename'] }}"
+
+    - name: Show OS family
+      debug:
+        msg: "OS Family: {{ ansible_facts['os_family'] }}"
