@@ -1,9 +1,8 @@
 ---
-- hosts: all
-  gather_facts: False
-  connection: local
-
+- name: Fetch Ubuntu version from host
+  hosts: all
+  gather_facts: yes
   tasks:
-    - name: OS Version
-      shell: lsb_release -a
-      ignore_errors: true
+    - name: Display Ubuntu version
+      debug:
+        msg: "The Ubuntu version on the host is {{ ansible_facts['distribution_version'] }}"
