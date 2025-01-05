@@ -1,5 +1,5 @@
 ---
-- name: Ensure QEMU Guest Agent is installed and running
+- name: Ensure QEMU Guest Agent and dependencies are installed and running
   hosts: all
   become: yes  # Brug sudo for at få adgang til systemadministrationskommandoer
   tasks:
@@ -8,6 +8,21 @@
         name: qemu-guest-agent
         state: present
         update_cache: yes  # Opdater pakkelisten, hvis nødvendigt
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Ensure qemu-utils package is installed (if required by qemu-guest-agent)
+      apt:
+        name: qemu-utils
+        state: present
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Ensure any additional dependencies for qemu-guest-agent are installed
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - libvirt-bin  # Eksempel på en mulig afhængighed
+        - qemu-kvm     # Hvis nødvendigt
       when: ansible_facts['os_family'] == 'Debian'
 
     - name: Ensure qemu-guest-agent service is enabled and running
