@@ -1,12 +1,27 @@
 ---
-- hosts: Ubuntu
-  become: true
+- name: Update and upgrade Ubuntu system
+  hosts: all
+  become: yes
   tasks:
-  - name: Update and upgrade apt packages
-    apt:
-      upgrade: yes
-      update_cache: yes
-      cache_valid_time: 86400 
-  - name: Remove dependencies that are no longer required
-    apt:
-      autoremove: yes
+
+    - name: Update APT repository cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install security updates
+      apt:
+        upgrade: dist
+        only_upgrade: yes
+
+    - name: Perform full system upgrade
+      apt:
+        upgrade: full-upgrade
+
+    - name: Remove unnecessary packages
+      apt:
+        autoremove: yes
+
+    - name: Clean APT cache
+      apt:
+        autoclean: yes
