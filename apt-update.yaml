@@ -16,7 +16,7 @@
 
     - name: Perform full system upgrade
       apt:
-        upgrade: full-upgrade
+        upgrade: upgrade
 
     - name: Remove unnecessary packages
       apt:
