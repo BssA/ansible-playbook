@@ -3,12 +3,14 @@
   hosts: all
   become: yes
   tasks:
-    - name: Gather dpkg facts
-      ansible.builtin.dpkg_facts:
+    - name: Check if qemu-guest-agent is installed
+      ansible.builtin.command: dpkg -l | grep qemu-guest-agent
+      register: qemu_agent_check
+      ignore_errors: yes
 
     - name: Install qemu-guest-agent if not present
       ansible.builtin.apt:
         name: qemu-guest-agent
         state: present
-      when: "'qemu-guest-agent' not in ansible_facts.packages"
+      when: qemu_agent_check.rc != 0
       update_cache: yes
