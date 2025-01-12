@@ -4,20 +4,15 @@
   become: yes
   tasks:
     - name: Tjek bannede IP'er i sshd jail
-      shell: fail2ban-client status sshd | grep "Banned IP list"
+      shell: fail2ban-client status sshd 2>/dev/null | grep "Banned IP list" || echo "No IPs banned"
       register: banned_ips
       changed_when: false
 
-    - name: Vis bannede IP'er
+    - name: Vis bannede IP'er eller håndter tomt output
       debug:
         msg: >
-          {% if 'Banned IP list:' in banned_ips.stdout %}
-          {% set banned_list = banned_ips.stdout.split(': ')[1] %}
-          {% if banned_list %}
-          Følgende IP'er er bannet: {{ banned_list }}
-          {% else %}
+          {% if banned_ips.stdout | trim == "No IPs banned" or not banned_ips.stdout %}
           Ingen IP'er er blevet bannet.
-          {% endif %}
           {% else %}
-          Ingen data fundet om bannede IP'er.
+          Bannede IP'er: {{ banned_ips.stdout.split(': ')[1] | default("Ingen IP'er fundet") }}
           {% endif %}
