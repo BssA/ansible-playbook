@@ -11,12 +11,11 @@
 
     - name: Install security updates
       apt:
-        upgrade: dist
-        only_upgrade: yes
+        upgrade: dist  # Opdatering af kun distribueringsopdateringer
 
     - name: Perform full system upgrade
       apt:
-        upgrade: upgrade
+        upgrade: full  # Brug "full" i stedet for "upgrade" for en fuld opgradering
 
     - name: Remove unnecessary packages
       apt:
