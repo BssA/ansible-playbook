@@ -1,6 +1,5 @@
 ---
 - name: Kontroller og installer QEMU-agent på Ubuntu
-  hosts: ubuntu_servers
   become: true
   tasks:
     - name: Kontroller om qemu-guest-agent er installeret
