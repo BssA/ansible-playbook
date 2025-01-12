@@ -1,16 +1,17 @@
 ---
-- name: Check and install QEMU guest agent on Ubuntu
-  hosts: your_server_group
-  become: yes
+- name: Kontroller og installer QEMU-agent på Ubuntu
+  hosts: ubuntu_servers
+  become: true
   tasks:
-    - name: Ensure QEMU guest agent is installed
-      ansible.builtin.apt:
+    - name: Kontroller om qemu-guest-agent er installeret
+      ansible.builtin.package:
         name: qemu-guest-agent
         state: present
-        update_cache: yes
+      register: qemu_agent_status
 
-    - name: Ensure the qemu-guest-agent service is enabled and running
+    - name: Start og aktiver qemu-guest-agent service
       ansible.builtin.service:
         name: qemu-guest-agent
         state: started
-        enabled: yes
+        enabled: true
+      when: qemu_agent_status.changed
