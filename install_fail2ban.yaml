@@ -1,25 +1,57 @@
 ---
-- name: Install fail2ban and configure sshd
+- name: Installer og konfigurer Fail2ban på Ubuntu
   hosts: all
-  become: true
+  become: yes
+  vars:
+    fail2ban_jail_local:
+      - "[DEFAULT]"
+      - "bantime = 600"
+      - "findtime = 600"
+      - "maxretry = 5"
+      - "ignoreip = 127.0.0.1/8 ::1"
 
+    ssh_jail_settings:
+      - "[sshd]"
+      - "enabled = true"
+      - "port = ssh"
+      - "filter = sshd"
+      - "logpath = /var/log/auth.log"
+      - "maxretry = 3"
+  
   tasks:
-    - name: Install fail2ban
-      ansible.builtin.apt:
-        name:
-          - fail2ban
-        update_cache: true
+    - name: Opdater pakke-cache
+      apt:
+        update_cache: yes
 
-#    - name: Copy fail2ban config file
-#      ansible.builtin.copy:
-#        src: configfiles/debian-sshd-default.conf
-#        dest: /etc/fail2ban/jail.d/debian-sshd-default.conf
-#        mode: '0644'
-#        owner: root
-#        group: root
-
-    - name: Restart fail2ban
-      ansible.builtin.systemd_service:
-        state: restarted
-        daemon_reload: true
+    - name: Installer Fail2ban
+      apt:
         name: fail2ban
+        state: present
+
+    - name: Opret konfigurationsfil til fail2ban
+      copy:
+        dest: /etc/fail2ban/jail.local
+        content: |
+          {% for line in fail2ban_jail_local %}
+          {{ line }}
+          {% endfor %}
+          {% for line in ssh_jail_settings %}
+          {{ line }}
+          {% endfor %}
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Genstart Fail2ban-tjenesten
+      service:
+        name: fail2ban
+        state: restarted
+        enabled: yes
+
+    - name: Bekræft at Fail2ban kører
+      shell: systemctl status fail2ban
+      register: fail2ban_status
+      changed_when: false
+
+    - debug:
+        var: fail2ban_status.stdout
