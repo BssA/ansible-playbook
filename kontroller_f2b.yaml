@@ -1,6 +1,6 @@
 ---
 - name: Tjek for bannede IP-adresser i Fail2ban
-  hosts: all
+  hosts: ubuntu_servers
   become: yes
   tasks:
     - name: Tjek bannede IP'er i sshd jail
@@ -11,8 +11,8 @@
     - name: Vis bannede IP'er
       debug:
         msg: >
-          {%- if banned_ips.stdout_lines[0] == "Banned IP list: " -%}
+          {% if banned_ips.stdout is search("Banned IP list: $") %}
           Ingen IP'er er blevet bannet.
-          {%- else -%}
-          Følgende IP'er er bannet: {{ banned_ips.stdout_lines[0].split(': ')[1] }}
-          {%- endif -%}
+          {% else %}
+          Følgende IP'er er bannet: {{ banned_ips.stdout.split(': ')[1] }}
+          {% endif %}
