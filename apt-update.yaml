@@ -26,8 +26,8 @@
     - name: Remove unnecessary packages
       apt:
         autoremove: yes
-      async: 1
-      poll: 1
+      async: 600
+      poll: 5
 
     - name: Clean APT cache
       apt:
