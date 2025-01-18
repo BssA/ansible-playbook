@@ -8,7 +8,7 @@
       apt:
         update_cache: yes
         cache_valid_time: 3600
-      async: 10
+      async: 1
       poll: 5
 
     - name: Install security updates
