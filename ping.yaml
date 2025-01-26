@@ -4,6 +4,11 @@
   connection: local
 
   tasks:
-    - name: ping
+    - name: Run ping command
       shell: ping -c 10 -w 10 8.8.8.8
+      register: ping_result
       ignore_errors: true
+
+    - name: Show ping output
+      debug:
+        msg: "{{ ping_result.stdout }}"
