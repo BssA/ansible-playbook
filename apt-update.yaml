@@ -8,29 +8,19 @@
       apt:
         update_cache: yes
         cache_valid_time: 3600
-      async: 600
-      poll: 5
 
     - name: Install security updates
       apt:
         upgrade: dist
-      async: 600
-      poll: 5
 
     - name: Perform full system upgrade
       apt:
         upgrade: full
-      async: 600
-      poll: 5
 
     - name: Remove unnecessary packages
       apt:
         autoremove: yes
-      async: 600
-      poll: 5
 
     - name: Clean APT cache
       apt:
         autoclean: yes
-      async: 600
-      poll: 5
