@@ -1,18 +1,17 @@
 ---
-- name: Check Zabbix Agent Version
+- name: Kontroller og installer QEMU-agent på Ubuntu
   hosts: all
-  gather_facts: false
+  become: true
   tasks:
-    - name: Get Zabbix Agent version
-      command: "zabbix_agentd -V"
-      register: zabbix_version_output
-      ignore_errors: true
+    - name: Kontroller om qemu-guest-agent er installeret
+      ansible.builtin.package:
+        name: qemu-guest-agent
+        state: present
+      register: qemu_agent_status
 
-    - name: Extract version
-      set_fact:
-        zabbix_version: "{{ zabbix_version_output.stdout_lines[0] | regex_search('Zabbix\\s+(\\d+\.\\d+\.\\d+)', '\\1') }}"
-      when: zabbix_version_output.rc == 0
-
-    - name: Display Zabbix Agent version
-      debug:
-        msg: "Installed Zabbix Agent version: {{ zabbix_version | default('Not Installed') }}"
+    - name: Start og aktiver qemu-guest-agent service
+      ansible.builtin.service:
+        name: qemu-guest-agent
+        state: started
+        enabled: true
+      when: qemu_agent_status.changed
