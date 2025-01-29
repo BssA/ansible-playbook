@@ -10,7 +10,7 @@
 
     - name: Extract version
       set_fact:
-        zabbix_version: "{{ zabbix_version_output.stdout_lines[0] | regex_search('Zabbix\\s+(\\d+\\.\\d+\\.\\d+)', '\\1') }}"
+        zabbix_version: "{{ zabbix_version_output.stdout | regex_search('Zabbix\)\s+(\d+\.\d+\.\d+)', '\1') }}"
       when: zabbix_version_output.rc == 0
 
     - name: Display Zabbix Agent version
