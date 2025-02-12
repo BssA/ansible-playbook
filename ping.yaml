@@ -6,8 +6,12 @@
     discord_webhook_url: "https://discord.com/api/webhooks/1339330700880646225/oWGXJi59Wfdq0hM9ZzNUnDM0JuAfedK-7JtDwFbfhLMo_iEoCxwinJ-yeNePbtXLrWcQ"
 
   tasks:
+    - name: Get the host's IP address
+      set_fact:
+        target_ip: "{{ ansible_host | default(inventory_hostname) }}"
+
     - name: Run ping command
-      shell: ping -c 4 -w 10 {{ ansible_default_ipv4 }}
+      shell: ping -c 4 -w 10 {{ target_ip }}
       register: ping_result
       ignore_errors: yes
 
