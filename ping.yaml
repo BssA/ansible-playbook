@@ -9,19 +9,15 @@
       register: ping_result
       ignore_errors: true
 
-    - name: Show ping output
-      debug:
-        msg: "{{ ping_result.stdout }}"
-
     - name: Format Discord message
       set_fact:
-        discord_message: >-
-          {
-            "content": "**Ansible Ping Test Status:**\n
-            **Host:** {{ inventory_hostname }}\n
-            **Status:** {{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}\n
-            **Output:** ```{{ ping_result.stdout | default('No output') | replace('\n', '\\n') }}```"
-          }
+        discord_message:
+          content: |
+            **Ansible Ping Test Status:**
+            **Host:** {{ inventory_hostname }}
+            **Status:** {{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}
+            **Output:**
+            ```{{ ping_result.stdout | default('No output') }}```
 
     - name: Send status to Discord Webhook
       uri:
