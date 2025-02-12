@@ -26,7 +26,6 @@
                   inline: true
                 - name: "Ping Test Details"
                   value: |               
-                    **Ping Output:**
                     ```css
                     {{ ping_result.stdout | default('No output available') }}
                     ```
