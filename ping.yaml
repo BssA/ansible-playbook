@@ -16,7 +16,8 @@
             **Ansible Ping Test Status:**
             **Host:** {{ inventory_hostname }}
             **Status:** {{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}
-            ```{{ ping_result.stdout | default('No output') }}```
+            ```bash
+            {{ ping_result.stdout | default('No output') }}```
             
     - name: Send status til Discord Webhook
       uri:
