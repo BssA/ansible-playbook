@@ -7,7 +7,7 @@
 
   tasks:
     - name: Run ping command
-      shell: ping -c 4 -w 10 8.8.8.8
+      shell: ping -c 4 -w 10 {{ inventory_ip }}
       register: ping_result
       ignore_errors: yes
 
