@@ -7,7 +7,7 @@
 
   tasks:
     - name: Run ping command
-      shell: ping -c 4 -w 10 {{ inventory_ip }}
+      shell: ping -c 4 -w 10 {{ ansible_default_ipv4 }}
       register: ping_result
       ignore_errors: yes
 
