@@ -25,10 +25,7 @@
                   value: "{{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}"
                   inline: true
                 - name: "Ping Test Details"
-                  value: |
-                    **Ping Test:** 
-                    {{ '✅ ' if ping_result.rc == 0 else '❌ ' }}**Status:** {{ 'Success' if ping_result.rc == 0 else 'Failed' }}
-                    
+                  value: |               
                     **Ping Output:**
                     ```css
                     {{ ping_result.stdout | default('No output available') }}
