@@ -13,11 +13,21 @@
       debug:
         msg: "{{ ping_result.stdout }}"
 
+    - name: Format Discord message
+      set_fact:
+        discord_message: >-
+          {
+            "content": "**Ansible Ping Test Status:**\n
+            **Host:** {{ inventory_hostname }}\n
+            **Status:** {{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}\n
+            **Output:** ```{{ ping_result.stdout | default('No output') | replace('\n', '\\n') }}```"
+          }
+
     - name: Send status to Discord Webhook
       uri:
         url: "https://discord.com/api/webhooks/1339330700880646225/oWGXJi59Wfdq0hM9ZzNUnDM0JuAfedK-7JtDwFbfhLMo_iEoCxwinJ-yeNePbtXLrWcQ"
         method: POST
-        body: "{{ lookup('template', 'discord_message.json.j2') }}"
+        body: "{{ discord_message | to_json }}"
         body_format: json
         headers:
           Content-Type: "application/json"
