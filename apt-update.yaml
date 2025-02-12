@@ -2,25 +2,77 @@
 - name: Update and upgrade Ubuntu system
   hosts: all
   become: yes
+  vars:
+    discord_webhook_url: "https://discord.com/api/webhooks/1339330700880646225/oWGXJi59Wfdq0hM9ZzNUnDM0JuAfedK-7JtDwFbfhLMo_iEoCxwinJ-yeNePbtXLrWcQ"
+
   tasks:
 
     - name: Update APT repository cache
       apt:
         update_cache: yes
         cache_valid_time: 3600
+      register: apt_update
+      ignore_errors: yes
+      changed_when: false
 
     - name: Install security updates
       apt:
         upgrade: dist
+      register: security_update
+      ignore_errors: yes
+      changed_when: false
 
     - name: Perform full system upgrade
       apt:
         upgrade: full
+      register: full_upgrade
+      ignore_errors: yes
+      changed_when: false
 
     - name: Remove unnecessary packages
       apt:
         autoremove: yes
+      register: autoremove
+      ignore_errors: yes
+      changed_when: false
 
     - name: Clean APT cache
       apt:
         autoclean: yes
+      register: autoclean
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Format Discord message
+      set_fact:
+        discord_message:
+          username: "Ansible Monitor"
+          avatar_url: "https://i.imgur.com/7oF3w3X.png"  # Optional icon
+          embeds:
+            - title: "Ansible Ubuntu Update Status"
+              color: "{{ 3066993 if (apt_update.rc == 0 and security_update.rc == 0 and full_upgrade.rc == 0 and autoremove.rc == 0 and autoclean.rc == 0) else 15158332 }}"
+              fields:
+                - name: "Host"
+                  value: "{{ inventory_hostname }}"
+                  inline: true
+                - name: "Status"
+                  value: "{{ '✅ Success' if (apt_update.rc == 0 and security_update.rc == 0 and full_upgrade.rc == 0 and autoremove.rc == 0 and autoclean.rc == 0) else '❌ Failed' }}"
+                  inline: true
+                - name: "Details"
+                  value: |
+                    **APT Update Cache:** {{ '✅ Success' if apt_update.rc == 0 else '❌ Failed' }}
+                    **Security Updates:** {{ '✅ Success' if security_update.rc == 0 else '❌ Failed' }}
+                    **Full System Upgrade:** {{ '✅ Success' if full_upgrade.rc == 0 else '❌ Failed' }}
+                    **Autoremove:** {{ '✅ Success' if autoremove.rc == 0 else '❌ Failed' }}
+                    **Autoclean:** {{ '✅ Success' if autoclean.rc == 0 else '❌ Failed' }}
+
+    - name: Send status to Discord Webhook
+      uri:
+        url: "{{ discord_webhook_url }}"
+        method: POST
+        body: "{{ discord_message | to_json }}"
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+        status_code: 204
+      when: discord_message is defined
