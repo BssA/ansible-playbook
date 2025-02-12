@@ -15,7 +15,7 @@
           content: |
             ```Ansible Ping Test Status: {{ inventory_hostname }} Status: {{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}```
             
-    - name: Send status to Discord Webhook
+    - name: Send status til Discord Webhook
       uri:
         url: "https://discord.com/api/webhooks/1339330700880646225/oWGXJi59Wfdq0hM9ZzNUnDM0JuAfedK-7JtDwFbfhLMo_iEoCxwinJ-yeNePbtXLrWcQ"
         method: POST
@@ -23,4 +23,5 @@
         body_format: json
         headers:
           Content-Type: "application/json"
+        status_code: 204  # Accepterer HTTP 204 som succes
       when: ping_result is defined
