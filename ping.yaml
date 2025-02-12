@@ -12,3 +12,19 @@
     - name: Show ping output
       debug:
         msg: "{{ ping_result.stdout }}"
+
+    - name: Send status to Discord Webhook
+      uri:
+        url: "https://discord.com/api/webhooks/1339330700880646225/oWGXJi59Wfdq0hM9ZzNUnDM0JuAfedK-7JtDwFbfhLMo_iEoCxwinJ-yeNePbtXLrWcQ"
+        method: POST
+        body: >
+          {
+            "content": "**Ansible Ping Test Status:**\n
+            Host: {{ inventory_hostname }}\n
+            Status: {{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}\n
+            Output: ```{{ ping_result.stdout | default('No output') }}```"
+          }
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+      when: ping_result is defined
