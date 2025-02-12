@@ -2,30 +2,43 @@
 - hosts: all
   gather_facts: False
   connection: local
+  vars:
+    discord_webhook_url: "https://discord.com/api/webhooks/1339330700880646225/oWGXJi59Wfdq0hM9ZzNUnDM0JuAfedK-7JtDwFbfhLMo_iEoCxwinJ-yeNePbtXLrWcQ"
 
   tasks:
     - name: Run ping command
       shell: ping -c 4 -w 10 8.8.8.8
       register: ping_result
-      ignore_errors: true
+      ignore_errors: yes
 
     - name: Format Discord message
       set_fact:
         discord_message:
-          content: |
-            **Ansible Ping Test Status:**
-            **Host:** {{ inventory_hostname }}
-            **Status:** {{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}
-            ```css
-            {{ ping_result.stdout | default('No output') }}```
-            
-    - name: Send status til Discord Webhook
+          embeds:
+            - title: "Ansible Ping Test Status"
+              color: "{{ 3066993 if ping_result.rc == 0 else 15158332 }}"
+              fields:
+                - name: "Host"
+                  value: "{{ inventory_hostname }}"
+                  inline: true
+                - name: "Status"
+                  value: "{{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}"
+                  inline: true
+                - name: "Details"
+                  value: |
+                    {{ '✅ ' if ping_result.rc == 0 else '❌ ' }}**Ping Test:** {{ 'Success' if ping_result.rc == 0 else 'Failed' }}
+                    **Ping Output:**
+                    ```css
+                    {{ ping_result.stdout | default('No output') }}
+                    ```
+
+    - name: Send status to Discord Webhook
       uri:
-        url: "https://discord.com/api/webhooks/1339330700880646225/oWGXJi59Wfdq0hM9ZzNUnDM0JuAfedK-7JtDwFbfhLMo_iEoCxwinJ-yeNePbtXLrWcQ"
+        url: "{{ discord_webhook_url }}"
         method: POST
         body: "{{ discord_message | to_json }}"
         body_format: json
         headers:
           Content-Type: "application/json"
-        status_code: 204  # Accepterer HTTP 204 som succes
-      when: ping_result is defined
+        status_code: 204
+      when: discord_message is defined
