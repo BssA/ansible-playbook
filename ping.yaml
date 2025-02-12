@@ -13,11 +13,11 @@
       set_fact:
         discord_message:
           content: |
-            **Ansible Ping Test Status:**
+            ```**Ansible Ping Test Status:**
             **Host:** {{ inventory_hostname }}
             **Status:** {{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}
             **Output:**
-            ```{{ ping_result.stdout | default('No output') }}```
+            {{ ping_result.stdout | default('No output') }}```
 
     - name: Send status to Discord Webhook
       uri:
