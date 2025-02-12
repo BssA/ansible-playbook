@@ -17,13 +17,7 @@
       uri:
         url: "https://discord.com/api/webhooks/1339330700880646225/oWGXJi59Wfdq0hM9ZzNUnDM0JuAfedK-7JtDwFbfhLMo_iEoCxwinJ-yeNePbtXLrWcQ"
         method: POST
-        body: >
-          {
-            "content": "**Ansible Ping Test Status:**\n
-            Host: {{ inventory_hostname }}\n
-            Status: {{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}\n
-            Output: ```{{ ping_result.stdout | default('No output') }}```"
-          }
+        body: "{{ lookup('template', 'discord_message.json.j2') }}"
         body_format: json
         headers:
           Content-Type: "application/json"
