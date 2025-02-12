@@ -50,21 +50,21 @@
           avatar_url: "https://i.imgur.com/7oF3w3X.png"  # Optional icon
           embeds:
             - title: "Ansible Ubuntu Update Status"
-              color: "{{ 3066993 if (apt_update.rc == 0 and security_update.rc == 0 and full_upgrade.rc == 0 and autoremove.rc == 0 and autoclean.rc == 0) else 15158332 }}"
+              color: "{{ 3066993 if (apt_update.rc | default(0)) == 0 and (security_update.rc | default(0)) == 0 and (full_upgrade.rc | default(0)) == 0 and (autoremove.rc | default(0)) == 0 and (autoclean.rc | default(0)) == 0 else 15158332 }}"
               fields:
                 - name: "Host"
                   value: "{{ inventory_hostname }}"
                   inline: true
                 - name: "Status"
-                  value: "{{ '✅ Success' if (apt_update.rc == 0 and security_update.rc == 0 and full_upgrade.rc == 0 and autoremove.rc == 0 and autoclean.rc == 0) else '❌ Failed' }}"
+                  value: "{{ '✅ Success' if (apt_update.rc | default(0)) == 0 and (security_update.rc | default(0)) == 0 and (full_upgrade.rc | default(0)) == 0 and (autoremove.rc | default(0)) == 0 and (autoclean.rc | default(0)) == 0 else '❌ Failed' }}"
                   inline: true
                 - name: "Details"
                   value: |
-                    **APT Update Cache:** {{ '✅ Success' if apt_update.rc == 0 else '❌ Failed' }}
-                    **Security Updates:** {{ '✅ Success' if security_update.rc == 0 else '❌ Failed' }}
-                    **Full System Upgrade:** {{ '✅ Success' if full_upgrade.rc == 0 else '❌ Failed' }}
-                    **Autoremove:** {{ '✅ Success' if autoremove.rc == 0 else '❌ Failed' }}
-                    **Autoclean:** {{ '✅ Success' if autoclean.rc == 0 else '❌ Failed' }}
+                    **APT Update Cache:** {{ '✅ Success' if (apt_update.rc | default(0)) == 0 else '❌ Failed' }}
+                    **Security Updates:** {{ '✅ Success' if (security_update.rc | default(0)) == 0 else '❌ Failed' }}
+                    **Full System Upgrade:** {{ '✅ Success' if (full_upgrade.rc | default(0)) == 0 else '❌ Failed' }}
+                    **Autoremove:** {{ '✅ Success' if (autoremove.rc | default(0)) == 0 else '❌ Failed' }}
+                    **Autoclean:** {{ '✅ Success' if (autoclean.rc | default(0)) == 0 else '❌ Failed' }}
 
     - name: Send status to Discord Webhook
       uri:
