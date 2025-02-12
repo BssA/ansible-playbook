@@ -5,7 +5,7 @@
 
   tasks:
     - name: Run ping command
-      shell: ping -c 10 -w 10 8.8.8.8
+      shell: ping -c 4 -w 10 8.8.8.8
       register: ping_result
       ignore_errors: true
 
@@ -14,7 +14,10 @@
         discord_message:
           content: |
             **Ansible Ping Test Status:**
-            ``` {{ inventory_hostname }} Status: {{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}```
+            **Host:** {{ inventory_hostname }}
+            **Status:** {{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}
+            **Output:**
+            ```{{ ping_result.stdout | default('No output') }}```
             
     - name: Send status til Discord Webhook
       uri:
