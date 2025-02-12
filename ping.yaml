@@ -11,7 +11,7 @@
       register: ping_result
       ignore_errors: yes
 
-    - name: Format Discord message
+    - name: Format Discord message as embed
       set_fact:
         discord_message:
           embeds:
@@ -24,12 +24,14 @@
                 - name: "Status"
                   value: "{{ '✅ Success' if ping_result.rc == 0 else '❌ Failed' }}"
                   inline: true
-                - name: "Details"
+                - name: "Ping Test Details"
                   value: |
-                    {{ '✅ ' if ping_result.rc == 0 else '❌ ' }}**Ping Test:** {{ 'Success' if ping_result.rc == 0 else 'Failed' }}
+                    **Ping Test:** 
+                    {{ '✅ ' if ping_result.rc == 0 else '❌ ' }}**Status:** {{ 'Success' if ping_result.rc == 0 else 'Failed' }}
+                    
                     **Ping Output:**
                     ```css
-                    {{ ping_result.stdout | default('No output') }}
+                    {{ ping_result.stdout | default('No output available') }}
                     ```
 
     - name: Send status to Discord Webhook
