@@ -1,8 +1,40 @@
 ---
-- name: Fetch Ubuntu version from host
+- name: Fetch Ubuntu version and send to Discord
   hosts: all
   gather_facts: yes
+  vars:
+    discord_webhook_url: "https://discord.com/api/webhooks/1339330700880646225/oWGXJi59Wfdq0hM9ZzNUnDM0JuAfedK-7JtDwFbfhLMo_iEoCxwinJ-yeNePbtXLrWcQ"
+
   tasks:
-    - name: Show distribution name
-      debug:
-        msg: "Distribution: {{ ansible_facts['distribution'] }} - Version: {{ ansible_facts['distribution_version'] }}"
+    - name: Get distribution info
+      set_fact:
+        distro_name: "{{ ansible_facts['distribution'] }}"
+        distro_version: "{{ ansible_facts['distribution_version'] }}"
+
+    - name: Format Discord message as embed
+      set_fact:
+        discord_message:
+          embeds:
+            - title: "Ubuntu Version Info"
+              color: 3447003
+              fields:
+                - name: "Host"
+                  value: "{{ inventory_hostname }}"
+                  inline: true
+                - name: "Distribution"
+                  value: "{{ distro_name }}"
+                  inline: true
+                - name: "Version"
+                  value: "{{ distro_version }}"
+                  inline: true
+
+    - name: Send Ubuntu version info to Discord
+      uri:
+        url: "{{ discord_webhook_url }}"
+        method: POST
+        body: "{{ discord_message | to_json }}"
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+        status_code: 204
+      when: discord_message is defined
